@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from threading import Thread
 
 DOOR_CLOSED = False
 PIN_NBR = 18
