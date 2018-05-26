@@ -9,7 +9,7 @@ def take_photo():
 
 class Camera(Thread):
 
-	def __init__(self, q_read):
+	def __init__(self, q_write):
 		Thread.__init__(self)
 		self.name = "camera_thread"
 		self.q_write = q_write
@@ -27,4 +27,4 @@ class Camera(Thread):
 				cooking_time = int(qr.data) # in seconds (otherwise decimals)
 			#According to the image, put the required cooking time here. If no cooking is required, put 0
 			if cooking_time != 0:
-				q_write.put(str(cooking_time))
+				self.q_write.put(str(cooking_time))
