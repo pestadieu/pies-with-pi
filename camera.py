@@ -30,3 +30,8 @@ class Camera(Thread):
 	
 	def take_photo(self):
 		self.camera.capture('pic.jpg')
+
+if __name__ == "__main__":
+    c = Picamera()
+    c.capture('pic.jpg)
+    
