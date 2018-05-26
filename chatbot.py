@@ -72,6 +72,7 @@ class Chatbot(Thread):
 		Thread.__init__(self)
 		self.name = "chatbot_thread"
 		self.q_read = q_read
+		self.t_timeout = 0
 	
 	def run(self):
 		if slack_client.rtm_connect(with_team_state=False):
@@ -103,9 +104,12 @@ class Chatbot(Thread):
 		self.t_timeout = timeout
 	
 	def timer_get_time(self):
-		remaining_time = t_timeout - (time.time() - self.t_start)
-		if remaining_time < 0:
+		if self.t_timeout == 0:
 			remaining_time = 0
+		else:
+			remaining_time = self.t_timeout - (time.time() - self.t_start)
+			if remaining_time < 0:
+				remaining_time = 0
 		hl.printTime(remaining_time)
 		return remaining_time
 		
