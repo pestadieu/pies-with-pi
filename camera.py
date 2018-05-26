@@ -16,7 +16,7 @@ class Camera(Thread):
 	def run(self):
 		while True:
 			time.sleep(1)
-			take_photo()
+			self.take_photo()
 			# Process your photo, do everything you want here
 			qr = qrtools.QR()
 			qr.decode('pic.jpg')
