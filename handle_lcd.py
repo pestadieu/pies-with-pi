@@ -11,4 +11,4 @@ def printTime(inputTime):
     lcd.write_string(str(inputTime) + " secondes")
     return
 
-#printTime(5)
+printTime(5)
