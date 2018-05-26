@@ -5,6 +5,7 @@ from slackclient import SlackClient
 from threading import Thread
 from queue import Queue
 import door_state as ds
+import handle_lcd as hl
 
 slack_token = '***REMOVED***'
 
@@ -87,28 +88,32 @@ class Chatbot(Thread):
 				
 				if not self.q_read.empty:
 					pass # Handle incoming command
+				
+				self.timer_get_time()
 					
 				time.sleep(RTM_READ_DELAY)
 		else:
 			print("Connection failed. Exception traceback printed above.")
 		
 	def timer_start(timeout):
+		hl.printTime(timeout)
 		while(ds.DOOR_CLOSED == False): # We wait until the door close
 			pass
 		self.t_start = time.time()
 		self.t_timeout = timeout
 	
 	def timer_get_time():
-		r = 
+		remaining_time = timeout - (time.time() - self.t_start)
 		if self.t_start != 0:
 			r = 
 			return(time.time() - self.t_start)
 		else:
 			return 0
-		# display r
+		hl.printTime(remaining)
 		return r
 		
 	def timer_stop():
+		ds.DOOR_CLOSED == False
 		self.t_start = 0
 		
 	def handle_command(self):
@@ -129,16 +134,14 @@ class Chatbot(Thread):
 			self.timer_stop()
 			response = "The microwave just stopped"
 		elif self.command.startswith("start"):
-			# ~ response = "Manual start"
-			q_write.put("START")
 			try:
-				q_write.put(self.command.split()[1])
+				response = "The microwave just started"
+				self.timer_start(int(self.command.split()[1]))
 			except:
-				q_write.put("0")
+				response = "Error: Please provide a cooking time"
 		elif self.command.startswith("snap"):
 			send_file()
-		# ~ elif self.command.startswith("keepwarm"):
-			# ~ response = "Manual start"
+			response = "Your food seems fine"
 		else:
 			response = default_response
 		# Sends the response back to the channel
