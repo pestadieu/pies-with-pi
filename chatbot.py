@@ -3,10 +3,10 @@ import time
 import re
 from slackclient import SlackClient
 from threading import Thread
+from queue import Queue
+import door_state as ds
 
 slack_token = '***REMOVED***'
-
-sc = SlackClient(slack_token)
 
 # instantiate Slack client
 slack_client = SlackClient(slack_token)
@@ -24,9 +24,16 @@ def display_help():
 	ch += "stop                       stop the microwave."
 	ch += "start [time in seconds]    manually start the microwave."
 	# ~ ch += "keepwarm                   keep the food warm until you come back."
-	# ~ ch += "snap                       sends a photo of the food."
+	ch += "snap                       sends a photo of the food."
 	return ch
 
+def send_text_response(response, channel):
+	slack_client.api_call(
+			"chat.postMessage",
+			channel=channel,
+			text=response
+		)
+		
 def parse_bot_commands(slack_events):
 	"""
 		Parses a list of events coming from the Slack RTM API to find bot commands.
@@ -39,6 +46,15 @@ def parse_bot_commands(slack_events):
 			if user_id == starterbot_id:
 				return message, event["channel"]
 	return None, None
+	
+def send_file():
+	a = slack_client.api_call(
+		'files.upload', 
+		channels="pies-with-pies-test", 
+		filename='pic.jpg', 
+		file=open('test.jpg', 'rb')
+	)
+	print "file sent"
 
 def parse_direct_mention(message_text):
 	"""
@@ -49,45 +65,14 @@ def parse_direct_mention(message_text):
 	# the first group contains the username, the second group contains the remaining message
 	return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
-def handle_command(command, channel):
-	"""
-		Executes bot command if the command is known
-	"""
-	# Default response is help text for the user
-	default_response = "Not sure what you mean. Try *{}*.".format(EXAMPLE_COMMAND)
-
-	# Finds and executes the given command, filling in response
-	response = None
-	# This is where you start to implement more commands!
-	if command.startswith(EXAMPLE_COMMAND):
-		response = display_help()
-	elif command.startswith("time"):
-		response = "The remaining time is"
-	elif command.startswith("stop"):
-		response = "Stop this microwave"
-	elif command.startswith("start"):
-		response = "Manual start"
-	# ~ elif command.startswith("snap"):
-		# ~ response = "Manual start"
-	# ~ elif command.startswith("keepwarm"):
-		# ~ response = "Manual start"
-	else:
-		response = default_response
-
-	# Sends the response back to the channel
-	slack_client.api_call(
-		"chat.postMessage",
-		channel=channel,
-		text=response
-	)
-
 class Chatbot(Thread):
 	
-	def __init__(self, q_write, q_read):
+	def __init__(self, q_read):
 		Thread.__init__(self)
-		self.name = "chatbot.py"
+		self.name = "chatbot_thread"
 		self.q_read = q_read
-		self.q_write = q_write
+	
+	def run():
 		if slack_client.rtm_connect(with_team_state=False):
 			print("Starter Bot connected and running!")
 			# Read bot's user ID by calling Web API method `auth.test`
@@ -99,9 +84,32 @@ class Chatbot(Thread):
 					self.command = command
 					self.channel = channel
 					self.handle_command()
+				
+				if not self.q_read.empty:
+					pass # Handle incoming command
+					
 				time.sleep(RTM_READ_DELAY)
 		else:
 			print("Connection failed. Exception traceback printed above.")
+		
+	def timer_start(timeout):
+		while(ds.DOOR_CLOSED == False): # We wait until the door close
+			pass
+		self.t_start = time.time()
+		self.t_timeout = timeout
+	
+	def timer_get_time():
+		r = 
+		if self.t_start != 0:
+			r = 
+			return(time.time() - self.t_start)
+		else:
+			return 0
+		# display r
+		return r
+		
+	def timer_stop():
+		self.t_start = 0
 		
 	def handle_command(self):
 		"""
@@ -116,10 +124,10 @@ class Chatbot(Thread):
 		if self.command.startswith(EXAMPLE_COMMAND):
 			response = display_help()
 		elif self.command.startswith("time"):
-			response = "The remaining time is" + q_read.get()
+			response = "The remaining time is" + self.timer_get_time()
 		elif self.command.startswith("stop"):
-			q_write.put("STOP")
-			# ~ response = "Stop this microwave"
+			self.timer_stop()
+			response = "The microwave just stopped"
 		elif self.command.startswith("start"):
 			# ~ response = "Manual start"
 			q_write.put("START")
@@ -127,30 +135,11 @@ class Chatbot(Thread):
 				q_write.put(self.command.split()[1])
 			except:
 				q_write.put("0")
-		# ~ elif self.command.startswith("snap"):
-			# ~ response = "Manual start"
+		elif self.command.startswith("snap"):
+			send_file()
 		# ~ elif self.command.startswith("keepwarm"):
 			# ~ response = "Manual start"
 		else:
 			response = default_response
-
 		# Sends the response back to the channel
-		slack_client.api_call(
-			"chat.postMessage",
-			channel=channel,
-			text=response
-		)
-
-# ~ if __name__ == "__main__":
-	# ~ if slack_client.rtm_connect(with_team_state=False):
-		# ~ print("Starter Bot connected and running!")
-		# ~ # Read bot's user ID by calling Web API method `auth.test`
-		# ~ starterbot_id = slack_client.api_call("auth.test")["user_id"]
-		# ~ while True:
-			# ~ command, channel = parse_bot_commands(slack_client.rtm_read())
-			# ~ if command:
-				# ~ print command, channel
-				# ~ handle_command(command, channel)
-			# ~ time.sleep(RTM_READ_DELAY)
-	# ~ else:
-		# ~ print("Connection failed. Exception traceback printed above.")
+		send_text_response(response, self.channel)
