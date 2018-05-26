@@ -103,14 +103,11 @@ class Chatbot(Thread):
 		self.t_timeout = timeout
 	
 	def timer_get_time():
-		remaining_time = timeout - (time.time() - self.t_start)
-		if self.t_start != 0:
-			r = 
-			return(time.time() - self.t_start)
-		else:
-			return 0
-		hl.printTime(remaining)
-		return r
+		remaining_time = t_timeout - (time.time() - self.t_start)
+		if remaining_time < 0:
+			remaining_time = 0
+		hl.printTime(remaining_time)
+		return remaining_time
 		
 	def timer_stop():
 		ds.DOOR_CLOSED == False
