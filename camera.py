@@ -12,8 +12,9 @@ class Camera(Thread):
 		Thread.__init__(self)
 		self.name = "camera_thread"
 		self.q_write = q_write
-		
-		while 1:
+	
+	def run():
+		while True:
 			sleep(1)
 			take_photo()
 			# Process your photo, do everything you want here
