@@ -4,7 +4,7 @@ import time
 DOOR_CLOSED = False
 PIN_NBR = 18
 
-class Camera(Thread):
+class DoorState(Thread):
 	
 	def __init__(self):
 		Thread.__init__(self)
@@ -18,7 +18,4 @@ class Camera(Thread):
 			if input_state == False:
 				DOOR_CLOSED = True
 				print('Button Pressed')
-				time.sleep(0.2)
-			else:
-				DOOR_CLOSED = False
 				time.sleep(0.2)

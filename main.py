@@ -9,7 +9,8 @@ if(__name__ == '__main__'):
 
 	thread_cam = Camera(queue_camera_chatbot)   # Camera thread
 	thread_chat = Chabot(queue_camera_chatbot)  # Chatbot thread
-	thread_chat = Chabot()  # Door state thread
+	thread_door = DoorState()  # Door state thread
 	
 	thread_cam.start()
 	thread_chat.start()
+	thread_door.start()
