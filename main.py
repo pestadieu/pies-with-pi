@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from Queue import Queue
+from queue import Queue
 from chatbot import *
 from camera import *
 

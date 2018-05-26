@@ -55,7 +55,7 @@ def send_file():
 		filename='pic.jpg', 
 		file=open('test.jpg', 'rb')
 	)
-	print "file sent"
+	print( "file sent")
 
 def parse_direct_mention(message_text):
 	"""
@@ -81,7 +81,7 @@ class Chatbot(Thread):
 			while True:
 				command, channel = parse_bot_commands(slack_client.rtm_read())
 				if command:
-					print command, channel
+					print (command, channel)
 					self.command = command
 					self.channel = channel
 					self.handle_command()
