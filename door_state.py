@@ -13,7 +13,7 @@ class DoorState(Thread):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(PIN_NBR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 		
-	def run():
+	def run(self):
 		while True:
 			input_state = GPIO.input(PIN_NBR)
 			if input_state == False:

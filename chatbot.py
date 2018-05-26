@@ -73,7 +73,7 @@ class Chatbot(Thread):
 		self.name = "chatbot_thread"
 		self.q_read = q_read
 	
-	def run():
+	def run(self):
 		if slack_client.rtm_connect(with_team_state=False):
 			print("Starter Bot connected and running!")
 			# Read bot's user ID by calling Web API method `auth.test`
@@ -102,14 +102,14 @@ class Chatbot(Thread):
 		self.t_start = time.time()
 		self.t_timeout = timeout
 	
-	def timer_get_time():
+	def timer_get_time(self):
 		remaining_time = t_timeout - (time.time() - self.t_start)
 		if remaining_time < 0:
 			remaining_time = 0
 		hl.printTime(remaining_time)
 		return remaining_time
 		
-	def timer_stop():
+	def timer_stop(self):
 		ds.DOOR_CLOSED == False
 		self.t_start = 0
 		
