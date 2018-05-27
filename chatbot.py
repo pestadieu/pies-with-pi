@@ -105,9 +105,10 @@ class Chatbot(Thread):
 		self.t_timeout = timeout
 
 	def timer_get_time(self):
-		if self.t_timeout == 0: remaining_time = 0
+		if self.t_timeout == 0:
+			remaining_time = 0
 		else:
-					remaining_time = self.t_timeout - (time.time() - self.t_start)
+			remaining_time = self.t_timeout - (time.time() - self.t_start)
 		if remaining_time < 0:
 			remaining_time = 0
 		hl.printTime(remaining_time)
@@ -123,7 +124,7 @@ class Chatbot(Thread):
 		"""
 			Executes bot command if the command is known
 		"""
-                 print("Handle command" + self.command)
+		print("Handle command" + self.command)
 		# Default response is help text for the user
 		default_response = "Not sure what you mean. Try *{}*.".format(EXAMPLE_COMMAND)
 
