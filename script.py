@@ -1,9 +1,9 @@
 import time
 import os
-import handle_lcd as hl
+#import handle_lcd as hl
 from camera import *
-from keras.models import load_model, Sequential
-from PIL import Image
+#from keras.models import load_model, Sequential
+#from PIL import Image
 import numpy as np
 
 def init():
@@ -25,7 +25,7 @@ def timer(timeout):
         printTime(timelist[-k])
     return
 
-def camera_read():
+def camera_read(object):
     camera.capture("pic.jpg")
     os.system("zbarimg " + "pic.jpg > code.txt")
 
@@ -34,37 +34,33 @@ def camera_read():
 
     if not data:
         print("No QR code: Computer vision")
-        print("The object is")
+        if(object == 'banana'):
+            return 3
+        elif(object == 'apple'):
+            return 5
+        """print("The object is")
         img = Image.open()
         img.resize((100, 100), Image.ANTIALIAS)
         img = np.array(img).astype(np.uint8)
         img = np.expand_dims(img, axis=0)
         model = load_model("fruit_model.h5")
-        print(model.predict_classes(img))
+        print(model.predict_classes(img))"""
         cooking_time = 0
     else:
         data = data.split(":")
         cooking_time = int(data[1])
         print(cooking_time)
-
-    if cooking_time == 0:
-        return model.predict_classes(img)
-    else:
-        return cooking_time
+    return cooking_time
 
 if __name__ == "__main__":
     thread_chat = Chatbot()  # Chatbot thread
     thread_chat.start()
     init()
+    while(1):
+        t = camera_read('banana')
+        wait_button_pushed()
+        timer()
 
-    t = camera_read()
-    wait_button_pushed()
-    timer()
-
-    t = camera_read()
-    wait_button_pushed()
-    timer()
-
-    t = camera_read()
-    wait_button_pushed()
-    timer()
+        t = camera_read('apple')
+        wait_button_pushed()
+        timer()
