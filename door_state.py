@@ -3,7 +3,7 @@ import time
 from threading import Thread
 
 DOOR_CLOSED = False
-PIN_NBR = 18
+PIN_NBR = 25
 
 class DoorState(Thread):
 	
