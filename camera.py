@@ -3,13 +3,16 @@ import time
 from threading import Thread
 from queue import Queue
 from picamera import PiCamera
-from PIL import Image
-import numpy as np
+
 from keras.models import load_model, Sequential
+import numpy as np
+from PIL import Image
+
 
 camera = PiCamera()
 
 class Camera(Thread):
+
     def __init__(self, q_write):
         Thread.__init__(self)
         self.name = "camera_thread"
@@ -22,8 +25,7 @@ class Camera(Thread):
             # Process your photo, do everything you want here
             os.system("zbarimg " + "pic.jpg > code.txt")
             with open('code.txt', "r") as text_file:
-                data = text_file.readline()
-            
+                data = text_file.readline()            
             if not data:
                 print("not QR code")
                 print("the fruit is...")
