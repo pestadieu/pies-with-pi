@@ -34,7 +34,7 @@ def send_text_response(response, channel):
 			channel=channel,
 			text=response
 		)
-		
+
 def parse_bot_commands(slack_events):
 	"""
 		Parses a list of events coming from the Slack RTM API to find bot commands.
@@ -47,12 +47,12 @@ def parse_bot_commands(slack_events):
 			if user_id == starterbot_id:
 				return message, event["channel"]
 	return None, None
-	
+
 def send_file():
 	a = slack_client.api_call(
-		'files.upload', 
-		channels="pies-with-pies-test", 
-		filename='pic.jpg', 
+		'files.upload',
+		channels="pies-with-pies-test",
+		filename='pic.jpg',
 		file=open('test.jpg', 'rb')
 	)
 	print( "file sent")
@@ -67,13 +67,13 @@ def parse_direct_mention(message_text):
 	return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 class Chatbot(Thread):
-	
+
 	def __init__(self, q_read):
 		Thread.__init__(self)
 		self.name = "chatbot_thread"
 		self.q_read = q_read
 		self.t_timeout = 0
-	
+
 	def run(self):
 		if slack_client.rtm_connect(with_team_state=False):
 			print("Starter Bot connected and running!")
@@ -86,38 +86,38 @@ class Chatbot(Thread):
 					self.command = command
 					self.channel = channel
 					self.handle_command()
-				
+
 				if not self.q_read.empty:
 					pass # Handle incoming command
-				
+
 				self.timer_get_time()
-					
+
 				time.sleep(RTM_READ_DELAY)
 		else:
 			print("Connection failed. Exception traceback printed above.")
-		
+
 	def timer_start(timeout):
-                print("timer start" + str(timeout))
+		print("timer start" + str(timeout))
 		hl.printTime(timeout)
 		while(ds.DOOR_CLOSED == False): # We wait until the door close
 			pass
 		self.t_start = time.time()
 		self.t_timeout = timeout
-	
+
 	def timer_get_time(self):
 		if self.t_timeout == 0: remaining_time = 0
 		else: remaining_time = self.t_timeout - (time.time() - self.t_start)
-	                if remaining_time < 0: 
-                                remaining_time = 0
-                hl.printTime(remaining_time)
-                print("timer get time" + str(remaining_time)) 
+			if remaining_time < 0:
+				remaining_time = 0
+				hl.printTime(remaining_time)
+				print("timer get time" + str(remaining_time))
 		return remaining_time
-		
+
 	def timer_stop(self):
-                print('timer stop')
+		print('timer stop')
 		ds.DOOR_CLOSED == False
 		self.t_start = 0
-		
+
 	def handle_command(self):
 		"""
 			Executes bot command if the command is known
