@@ -68,11 +68,9 @@ def parse_direct_mention(message_text):
 
 class Chatbot(Thread):
 
-	def __init__(self, q_read):
+	def __init__(self):
 		Thread.__init__(self)
 		self.name = "chatbot_thread"
-		self.q_read = q_read
-		self.t_timeout = 0
 
 	def run(self):
 		if slack_client.rtm_connect(with_team_state=False):
@@ -88,14 +86,10 @@ class Chatbot(Thread):
 					self.channel = channel
 					self.handle_command()
 
-				if not self.q_read.empty:
-					pass # Handle incoming command
-
-				self.timer_get_time()
-
 				time.sleep(RTM_READ_DELAY)
 		else:
 			print("Connection failed. Exception traceback printed above.")
+
 
 	def timer_start(timeout):
 		print("timer start" + str(timeout))
@@ -106,9 +100,10 @@ class Chatbot(Thread):
 		self.t_timeout = timeout
 
 	def timer_get_time(self):
-		if self.t_timeout == 0: remaining_time = 0
+		if self.t_timeout == 0:
+			remaining_time = 0
 		else:
-					remaining_time = self.t_timeout - (time.time() - self.t_start)
+			remaining_time = self.t_timeout - (time.time() - self.t_start)
 		if remaining_time < 0:
 			remaining_time = 0
 		hl.printTime(remaining_time)
@@ -124,6 +119,7 @@ class Chatbot(Thread):
 		"""
 			Executes bot command if the command is known
 		"""
+		print("Handle command" + self.command)
 		# Default response is help text for the user
 		default_response = "Not sure what you mean. Try *{}*.".format(EXAMPLE_COMMAND)
 
@@ -133,14 +129,12 @@ class Chatbot(Thread):
 		if self.command.startswith(EXAMPLE_COMMAND):
 			response = display_help()
 		elif self.command.startswith("time"):
-			response = "The remaining time is" + self.timer_get_time()
+			response = "There are 2 seconds remaining"
 		elif self.command.startswith("stop"):
-			self.timer_stop()
 			response = "The microwave just stopped"
 		elif self.command.startswith("start"):
 			try:
 				response = "The microwave just started"
-				self.timer_start(int(self.command.split()[1]))
 			except:
 				response = "Error: Please provide a cooking time"
 		elif self.command.startswith("snap"):
