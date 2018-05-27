@@ -123,6 +123,7 @@ class Chatbot(Thread):
 		"""
 			Executes bot command if the command is known
 		"""
+                 print("Handle command" + self.command)
 		# Default response is help text for the user
 		default_response = "Not sure what you mean. Try *{}*.".format(EXAMPLE_COMMAND)
 
