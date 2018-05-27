@@ -107,8 +107,8 @@ class Chatbot(Thread):
 	def timer_get_time(self):
 		if self.t_timeout == 0: remaining_time = 0
 		else: remaining_time = self.t_timeout - (time.time() - self.t_start)
-		        if remaining_time < 0: 
-                            remaining_time = 0
+	                if remaining_time < 0: 
+                                remaining_time = 0
                 hl.printTime(remaining_time)
                 print("timer get time" + str(remaining_time)) 
 		return remaining_time
