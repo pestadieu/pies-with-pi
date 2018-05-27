@@ -81,7 +81,7 @@ class Chatbot(Thread):
 			starterbot_id = slack_client.api_call("auth.test")["user_id"]
 			while True:
 				command, channel = parse_bot_commands(slack_client.rtm_read())
-                                print(command, channel)
+				print(command, channel)
 				if command:
 					print (command, channel)
 					self.command = command
