@@ -1,5 +1,6 @@
 from RPLCD import CharLCD
 import time
+import RPi.GPIO as GPIO
 
 lcd = CharLCD(cols=16, rows=2, pin_rs=4, pin_e=17, pins_data=[18, 22, 23, 24], numbering_mode=GPIO.BCM)
 
@@ -10,4 +11,19 @@ def printTime(inputTime):
     lcd.write_string(str(inputTime) + " secondes")
     return
 
-printTime(5)
+def clear():
+    lcd.cursor_pos = (0,0)
+    lcd.write_string(" " * 16)
+    lcd.cursor_pos = (1, 0)
+    lcd.write_string(" " * 16)
+    lcd.cursor_pos = (0, 0)
+    return
+
+if __name__ == "__main__":
+    clear()
+    printTime(5)
+    time.sleep(3)
+    clear()
+    printTime(45)
+    time.sleep(2)
+    clear()
