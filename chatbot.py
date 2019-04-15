@@ -7,7 +7,7 @@ from queue import Queue
 import door_state as ds
 import handle_lcd as hl
 
-slack_token = '***REMOVED***'
+slack_token = ''
 
 # instantiate Slack client
 slack_client = SlackClient(slack_token)
